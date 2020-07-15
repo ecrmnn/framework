@@ -961,7 +961,13 @@ class Collection implements ArrayAccess, Enumerable
         $keys = is_array($keys) ? $keys : func_get_args();
 
         return $this->map(function ($item) use ($keys) {
-            return Arr::only($item, $keys);
+            $hasKey = fn ($key) => isset($item->{$key}) || isset($item[$key]);
+
+            $existingKeys = array_filter($keys, $hasKey);
+
+            $values = array_map(fn ($key) => data_get($item, $key), $existingKeys);
+
+            return array_combine($existingKeys, $values);
         });
     }
 

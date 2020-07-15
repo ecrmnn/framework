@@ -230,6 +230,36 @@ class DatabaseEloquentCollectionTest extends TestCase
         $this->assertEquals(BaseCollection::class, get_class($c));
     }
 
+    public function testSelectMapsModelsToABaseCollection()
+    {
+        $john = new TestEloquentCollectionModel();
+        $john->first = 'John';
+        $john->last = 'Doe';
+        $john->name = 'John Doe';
+        $john->email = 'john.doe@gmail.com';
+
+        $jane = new TestEloquentCollectionModel();
+        $jane->first = 'Jane';
+        $jane->last = 'Doe';
+        $jane->name = 'Jane Doe';
+        $jane->email = 'jane.doe@gmail.com';
+
+        $c = new Collection([$john, $jane]);
+
+        $cAfterMap = $c->select(['name', 'email', 'missing-key']);
+
+        $this->assertEquals(Collection::class, get_class($c));
+        $this->assertEquals(BaseCollection::class, get_class($cAfterMap));
+
+        $this->assertEquals([[
+            'name' => 'John Doe',
+            'email' => 'john.doe@gmail.com',
+        ], [
+            'name' => 'Jane Doe',
+            'email' => 'jane.doe@gmail.com',
+        ]], $cAfterMap->all());
+    }
+
     public function testCollectionDiffsWithGivenCollection()
     {
         $one = m::mock(Model::class);

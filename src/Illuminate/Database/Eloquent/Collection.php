@@ -282,6 +282,17 @@ class Collection extends BaseCollection implements QueueableCollection
     }
 
     /**
+     * Map over the items, return a collection with only the specified keys.
+     *
+     * @param  array  $keys
+     * @return \Illuminate\Support\Collection|static
+     */
+    public function select($keys)
+    {
+        return $this->toBase()->select($keys);
+    }
+
+    /**
      * Reload a fresh model instance from the database for all the entities.
      *
      * @param  array|string  $with
